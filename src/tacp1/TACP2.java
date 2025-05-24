@@ -19,6 +19,8 @@ import java.util.Scanner;
 //Test comment
 //Test
 //Test III
+//Created Branch
+//Test Pull request
 
 public class TACP2 {
 
@@ -164,7 +166,7 @@ public class TACP2 {
             System.out.println("\n1. Daily Attendance Records");
             System.out.println("2. Calculate Hours Worked Per Week");
             System.out.println("3. Back to Main Menu");
-            System.out.println("----------------------------");
+            System.out.println("||----------------------------||");
             System.out.print("\nEnter your choice: ");
 
             int choice = -1;
