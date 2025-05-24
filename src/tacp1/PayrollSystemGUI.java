@@ -6,7 +6,7 @@ package tacp1;
 
 /**
  *
- * @author USER
+ * @author Archie
  */
 import javax.swing.*;
 import java.awt.*;
