@@ -1,4 +1,4 @@
-package tacp1;
+package Console;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,11 +16,6 @@ import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 
-//Test comment
-//Test
-//Test III
-//Created Branch
-//Test Pull request
 
 public class TACP2 {
 
@@ -536,7 +531,7 @@ public class TACP2 {
     }
 }
 
-    private static double computeSSS(double grossSalary) {
+    public static double computeSSS(double grossSalary) {
         if (grossSalary <= 3250) {
             return 135;
         } else if (grossSalary <= 3750) {
@@ -930,7 +925,7 @@ public class TACP2 {
         }
     }
 
-    private static double computePhilHealth(double grossSalary) {
+    public static double computePhilHealth(double grossSalary) {
         if (grossSalary <= 10000) {
             return grossSalary * 0.03 / 2;
         } else if (grossSalary <= 59999.99) {
@@ -941,11 +936,11 @@ public class TACP2 {
         return 0;
     }
 
-    private static double computePagIbig(double grossSalary) {
+    public static double computePagIbig(double grossSalary) {
         return Math.min(grossSalary * 0.02, 100);
     }
 
-    private static double computeWithholdingTax(double grossSalary) {
+    public static double computeWithholdingTax(double grossSalary) {
         if (grossSalary <= 20833) {
             return 0;
         } else if (grossSalary <= 33332) {
