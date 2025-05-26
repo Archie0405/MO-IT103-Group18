@@ -19,14 +19,20 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import Console.TACP2; // We import this class to javbe access to deductions
 
 
 public class PayrollSystemGUI extends JFrame {
     private static String loggedInUser = "";
-    
+    private List<String> employeeNames = new ArrayList<>();
+    private Set<String> uniqueEmployeeIDs = new HashSet<>();
+
     public static void main(String[] args) {
         //Here it will just launch the login screen.
         SwingUtilities.invokeLater(PayrollSystemGUI::showLoginScreen);
@@ -52,6 +58,8 @@ public class PayrollSystemGUI extends JFrame {
         loginButton.addActionListener(e -> {
             String username = userText.getText();
             String password = new String(passText.getPassword());
+            
+            
             
             //Here is the authentication of the credentials.
             if (authenticateUser(username, password)) {
@@ -89,7 +97,7 @@ public class PayrollSystemGUI extends JFrame {
             while ((line = br.readLine()) != null) {
                 String[] credentials = parseCSVLine(line);
                 
-                //Now it will check if the usernam and password is correct or has a match.
+                //Now it will check if the username and password is correct or has a match.
                 if (credentials.length >= 2 && credentials[0].equals(username) && credentials[1].equals(password)) {
                     return true;
                 }
@@ -100,10 +108,62 @@ public class PayrollSystemGUI extends JFrame {
         return false;
     }
     
+    private static String[] parseCSVLine(String line) {
+        return line.replaceAll("\"", "").split(",");
+    }
+
+    public PayrollSystemGUI(String username) {
+        loggedInUser = username;
+        setTitle("MotorPH Payroll System");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(6, 1, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(100, 200, 100, 200));
+
+        JButton profileButton = new JButton("View Profile");
+        JButton attendanceButton = new JButton("View Attendance");
+        JButton payrollButton = new JButton("View Payroll");
+        JButton multiplicationTableButton = new JButton("Multiplication Table");
+        JButton logoutButton = new JButton("Log Out");
+
+        profileButton.addActionListener(e -> showProfile());
+        attendanceButton.addActionListener(e -> showAttendance());
+        payrollButton.addActionListener(e -> showPayrollMenu());
+        multiplicationTableButton.addActionListener(e -> showMultiplicationTable());
+        logoutButton.addActionListener(e -> logOut());
+
+        panel.add(profileButton);
+        panel.add(attendanceButton);
+        panel.add(payrollButton);
+        panel.add(multiplicationTableButton);
+        panel.add(logoutButton);
+
+        add(panel);
+    }
+
+    private void showMultiplicationTable() {
+        StringBuilder table = new StringBuilder();
+        int size = 10;
+
+        for (int i = 1; i <= size; i++) {
+            for (int j = 1; j <= size; j++) {
+                table.append(i * j).append("\t");
+            }
+            table.append("\n");
+        }
+
+        JOptionPane.showMessageDialog(this, table.toString(), "Multiplication Table", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    
     //It retrieves the information of the user from the csv file.
     private static String getUserProfile(String username) {
     String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
     String line;
+    StringBuilder profileData = new StringBuilder();
     
     //It will now try to read the csv file and find the user's info.
     try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -123,8 +183,9 @@ public class PayrollSystemGUI extends JFrame {
     } catch (IOException e) {
         e.printStackTrace();
     }
-    return "Profile not found.";
+    return profileData.length() > 0 ? profileData.toString() : "Profile not found.";
     }
+
     
     //It will now get all the attendance data of the user from the csv file.
     private static String getUserAttendance(String username) {
@@ -148,39 +209,31 @@ public class PayrollSystemGUI extends JFrame {
         return attendanceDetails.length() > 0 ? attendanceDetails.toString() : "No attendance records found.";
     }
     
-    //We make the payroll system window after the user successfully logged in.
-    public PayrollSystemGUI(String username) {
-        loggedInUser = username;
-        setTitle("MotorPH Payroll System");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+    private static List<String> getAttendanceHistory(String username) {
+    List<String> attendanceRecords = new ArrayList<>();
+    String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+    String line;
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    
+    try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+        while ((line = br.readLine()) != null) {
+            String[] record = parseCSVLine(line);
+            if (record.length >= 6 && record[0].equals(username)) {
+                LocalTime loginTime = LocalTime.parse(record[4], timeFormatter);
+                LocalTime logoutTime = LocalTime.parse(record[5], timeFormatter);
+                double hoursWorked = (logoutTime.toSecondOfDay() - loginTime.toSecondOfDay()) / 3600.0; // Convert seconds to hours
+                
+                attendanceRecords.add("Date: " + record[3] + " | Hours Worked: " + String.format("%.2f", hoursWorked));
+            }
 
-        // We created here the main panel for the menu options
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 1, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(100, 200, 100, 200));
-
-        // We create buttons here the menu
-        JButton profileButton = new JButton("View Profile");
-        JButton attendanceButton = new JButton("View Attendance");
-        JButton payrollButton = new JButton("View Payroll");
-        JButton logoutButton = new JButton("Log Out");
-
-        // We set the actions for each buttons
-        profileButton.addActionListener(e -> showProfile());
-        attendanceButton.addActionListener(e -> showAttendance());
-        payrollButton.addActionListener(e -> showPayrollMenu());
-        logoutButton.addActionListener(e -> logOut());
-
-        // Then we add the buttons in the panel
-        panel.add(profileButton);
-        panel.add(attendanceButton);
-        panel.add(payrollButton);
-        panel.add(logoutButton);
-
-        add(panel);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+
+    return attendanceRecords;
+}
+
     
     // This will display an information message to the user
     private void showMessage(String message) {
@@ -194,7 +247,7 @@ public class PayrollSystemGUI extends JFrame {
     
     //This will display the options of attendance menu
     private void showAttendance() {
-        String[] options = {"View Daily Attendance Record", "Calculate Hours Worked Per Week", "Back to Main Menu"};
+        String[] options = {"View Daily Attendance Record", "Calculate Hours Worked Per Week","View Attendance History", "Back to Main Menu"};
         int choice = JOptionPane.showOptionDialog(
             this, 
             "Select an option:", 
@@ -213,7 +266,11 @@ public class PayrollSystemGUI extends JFrame {
             case 1:
                 showWeeklyHoursWorked();
                 break;
+            //We add an additional option to show attendance history.
             case 2:
+                showAttendanceHistory();
+                break;
+            case 3:
                 showMessage("Returning to Main Menu.");
                 break;
         }
@@ -234,6 +291,26 @@ public class PayrollSystemGUI extends JFrame {
     JOptionPane.showMessageDialog(this, scrollPane, "Daily Attendance", JOptionPane.INFORMATION_MESSAGE);
     }
     
+    //This will show the attendance history of the user.
+    private void showAttendanceHistory() {
+    List<String> attendanceHistory = getAttendanceHistory(loggedInUser);
+    
+    StringBuilder historyInfo = new StringBuilder("Attendance History:\n");
+    for (String record : attendanceHistory) {
+        historyInfo.append(record).append("\n");
+    }
+
+    JTextArea textArea = new JTextArea(historyInfo.toString());
+    textArea.setEditable(false);
+    textArea.setLineWrap(true);
+    textArea.setWrapStyleWord(true);
+
+    JScrollPane scrollPane = new JScrollPane(textArea);
+    scrollPane.setPreferredSize(new Dimension(300, 300));
+
+    JOptionPane.showMessageDialog(this, scrollPane, "Full Attendance History", JOptionPane.INFORMATION_MESSAGE);
+}
+
     // This will read attendance CSV file and get the records of the current user.
     private static String getDailyAttendance(String username) {
         String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
@@ -269,7 +346,7 @@ public class PayrollSystemGUI extends JFrame {
     
     //We also make it scrollable like what we did in viewing the attendance.
     JScrollPane scrollPane = new JScrollPane(textArea);
-    scrollPane.setPreferredSize(new Dimension(500, 300));
+    scrollPane.setPreferredSize(new Dimension(200, 300));
     
     //It displays the weekly hours worked in a message dialog
     JOptionPane.showMessageDialog(this, scrollPane, "Weekly Hours Worked", JOptionPane.INFORMATION_MESSAGE);
@@ -379,10 +456,27 @@ public class PayrollSystemGUI extends JFrame {
     }
     
     //This will show the computed salary in a message dialog.
+    //We add a sample matrix of the salary tier.
     private void showSalary(double totalHours) { 
     String salaryInfo = computeSalary(loggedInUser, totalHours);
-    JOptionPane.showMessageDialog(this, salaryInfo, "Salary Details", JOptionPane.INFORMATION_MESSAGE);
+    int[][] salaryMatrix = {
+        {35000, 5000, 30000},
+        {42000, 6000, 36000},
+        {50000, 7500, 42500}
+    };
+
+    StringBuilder salaryDetails = new StringBuilder();
+    salaryDetails.append(salaryInfo).append("\n\nSample Salary Matrix:\n");
+    
+    for (int i = 0; i < salaryMatrix.length; i++) {
+        salaryDetails.append("Tier ").append(i + 1).append(": Base = ").append(salaryMatrix[i][0])
+                     .append(", Tax = ").append(salaryMatrix[i][1])
+                     .append(", Net Pay = ").append(salaryMatrix[i][2]).append("\n");
     }
+
+    JOptionPane.showMessageDialog(this, salaryDetails.toString(), "Salary Details", JOptionPane.INFORMATION_MESSAGE);
+}
+
     
     //This will compute the gross salary based on the input in the total hours worked of the user.
     //Then get the details of the user.
@@ -414,8 +508,10 @@ public class PayrollSystemGUI extends JFrame {
         String formattedSalary = String.format("%.2f", grossSalary);
         return "Employee Name: " + employeeName + "\nEmployee ID: " + employeeID + "\nGross Salary: " + String.format("%.2f", grossSalary);
     }
+    
  
     //This will display the salary deductions breakdown.
+    //We add the feature ArrayList in this method to store deductions dynamically.
     private void showDeductions(String username, double totalHours) {
         //Here we decided to just import the calculations of the deduction from the console base code.
         //This will only make an instance of console base code (TACP2)to have access to the deduction methods.
@@ -429,26 +525,29 @@ public class PayrollSystemGUI extends JFrame {
         double grossSalary = Double.parseDouble(salaryDetails[2].replaceAll("Gross Salary: ", "").trim());
 
         //Here it computes the deductions using the method we use from TACP2.
-        double sssDeduction = tacp2.computeSSS(grossSalary);
-        double philHealthDeduction = tacp2.computePhilHealth(grossSalary);
-        double pagIbigDeduction = tacp2.computePagIbig(grossSalary);
-        double withholdingTax = tacp2.computeWithholdingTax(grossSalary);
+        List<Double> deductionsList = new ArrayList<>();
+        deductionsList.add(tacp2.computeSSS(grossSalary));
+        deductionsList.add(tacp2.computePhilHealth(grossSalary));
+        deductionsList.add(tacp2.computePagIbig(grossSalary));
+        deductionsList.add(tacp2.computeWithholdingTax(grossSalary));
+
 
         //Here we just add all the deductions and it's sum. Then subtract it to the gross salary.
-        double totalDeductions = sssDeduction + philHealthDeduction + pagIbigDeduction + withholdingTax;
+        double totalDeductions = deductionsList.stream().mapToDouble(Double::doubleValue).sum();
         double netPay = grossSalary - totalDeductions;
 
         //This will display the total deductions and the net pay.
         String deductionsInfo = "Gross Salary: " + String.format("%.2f", grossSalary) +
-                                "\nSSS Deduction: " + String.format("%.2f", sssDeduction) +
-                                "\nPhilHealth Deduction: " + String.format("%.2f", philHealthDeduction) +
-                                "\nPag-IBIG Deduction: " + String.format("%.2f", pagIbigDeduction) +
-                                "\nWithholding Tax: " + String.format("%.2f", withholdingTax) +
-                                "\nTotal Deductions: " + String.format("%.2f", totalDeductions) +
-                                "\nNet Pay: " + String.format("%.2f", netPay);
+                            "\nSSS Deduction: " + String.format("%.2f", deductionsList.get(0)) +
+                            "\nPhilHealth Deduction: " + String.format("%.2f", deductionsList.get(1)) +
+                            "\nPag-IBIG Deduction: " + String.format("%.2f", deductionsList.get(2)) +
+                            "\nWithholding Tax: " + String.format("%.2f", deductionsList.get(3)) +
+                            "\nTotal Deductions: " + String.format("%.2f", totalDeductions) +
+                            "\nNet Pay: " + String.format("%.2f", netPay);
 
         JOptionPane.showMessageDialog(null, deductionsInfo, "Salary Deductions Breakdown", JOptionPane.INFORMATION_MESSAGE);
     }
+
 
   
     //Here it will display the user's payslip. It includes the computation of gross salary, deductions and compensations (allowances).
@@ -526,7 +625,5 @@ public class PayrollSystemGUI extends JFrame {
         SwingUtilities.invokeLater(PayrollSystemGUI::showLoginScreen); // Return to login screen
     }
 
-    private static String[] parseCSVLine(String line) {
-        return line.replaceAll("\"", "").split(",");
-    }
+    
 }
