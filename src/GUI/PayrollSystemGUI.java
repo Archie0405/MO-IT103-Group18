@@ -30,6 +30,7 @@ import Console.TACP2; // We import this class to javbe access to deductions
 
 public class PayrollSystemGUI extends JFrame {
     private static String loggedInUser = "";
+    private static String adminID = "";
     private List<String> employeeNames = new ArrayList<>();
     private Set<String> uniqueEmployeeIDs = new HashSet<>();
 
@@ -39,7 +40,7 @@ public class PayrollSystemGUI extends JFrame {
     }
     
     //it will now display the login screen and ask for authentication.
-    private static void showLoginScreen() {
+    public static void showLoginScreen() {
         JFrame loginFrame = new JFrame("MotorPH Login");
         loginFrame.setSize(400, 250);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -91,6 +92,7 @@ public class PayrollSystemGUI extends JFrame {
     private static boolean authenticateUser(String username, String password) {
         String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
         String line;
+        boolean isFirstEntry = true;
         
         //This will attempt to read the csv file and verify the data.
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -98,7 +100,11 @@ public class PayrollSystemGUI extends JFrame {
                 String[] credentials = parseCSVLine(line);
                 
                 //Now it will check if the username and password is correct or has a match.
-                if (credentials.length >= 2 && credentials[0].equals(username) && credentials[1].equals(password)) {
+                if (credentials.length >= 2 && credentials[0].equals(username) && credentials[1].equals(password))
+                if (isFirstEntry) {  
+                        adminID = "10001";  
+                        isFirstEntry = false;}
+                {
                     return true;
                 }
             }
@@ -139,9 +145,23 @@ public class PayrollSystemGUI extends JFrame {
         panel.add(attendanceButton);
         panel.add(payrollButton);
         panel.add(multiplicationTableButton);
+        if (loggedInUser.equals("10001")) {  
+            JButton adminPanelButton = new JButton("Admin Controls");
+            adminPanelButton.addActionListener(e -> {
+                dispose();  // Close PayrollSystemGUI
+                new AdminAccess().setVisible(true);  // Open Admin Access
+            });
+            panel.add(adminPanelButton);
+        }
+
+
         panel.add(logoutButton);
 
         add(panel);
+    }
+    private void showAdminPanel() {
+        JOptionPane.showMessageDialog(this, "Admin Panel Access Granted!", "Admin Controls", JOptionPane.INFORMATION_MESSAGE);
+        // Add admin management functions here.
     }
 
     private void showMultiplicationTable() {
@@ -480,7 +500,7 @@ public class PayrollSystemGUI extends JFrame {
     
     //This will compute the gross salary based on the input in the total hours worked of the user.
     //Then get the details of the user.
-    private static String computeSalary(String username, double totalHours) {
+    public static String computeSalary(String username, double totalHours) {
         //This is the file path of the employee database or csv file.
         String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
         String line;
