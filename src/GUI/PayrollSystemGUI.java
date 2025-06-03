@@ -20,20 +20,15 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import Console.TACP2; // We import this class to javbe access to deductions
 
 
 public class PayrollSystemGUI extends JFrame {
     private static String loggedInUser = "";
-    private static String adminID = "";
-    private List<String> employeeNames = new ArrayList<>();
-    private Set<String> uniqueEmployeeIDs = new HashSet<>();
-
+    
     public static void main(String[] args) {
         //Here it will just launch the login screen.
         SwingUtilities.invokeLater(PayrollSystemGUI::showLoginScreen);
@@ -102,9 +97,6 @@ public class PayrollSystemGUI extends JFrame {
                 //Now it will check if the username and password is correct or has a match.
                 if (credentials.length >= 2 && credentials[0].equals(username) && credentials[1].equals(password))
                 if (isFirstEntry) {  
-                        adminID = "10001";  
-                        isFirstEntry = false;}
-                {
                     return true;
                 }
             }
@@ -159,10 +151,6 @@ public class PayrollSystemGUI extends JFrame {
 
         add(panel);
     }
-    private void showAdminPanel() {
-        JOptionPane.showMessageDialog(this, "Admin Panel Access Granted!", "Admin Controls", JOptionPane.INFORMATION_MESSAGE);
-        // Add admin management functions here.
-    }
 
     private void showMultiplicationTable() {
         StringBuilder table = new StringBuilder();
@@ -206,29 +194,6 @@ public class PayrollSystemGUI extends JFrame {
     return profileData.length() > 0 ? profileData.toString() : "Profile not found.";
     }
 
-    
-    //It will now get all the attendance data of the user from the csv file.
-    private static String getUserAttendance(String username) {
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
-        String line;
-        StringBuilder attendanceDetails = new StringBuilder();
-        
-        //It will now try to read the csv file and find the data needed.
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            while ((line = br.readLine()) != null) {
-                String[] record = parseCSVLine(line);
-                if (record.length >= 4 && record[0].equals(username)) {
-                    attendanceDetails.append("Date: ").append(record[1])
-                        .append(" | Employee #: ").append(record[2])
-                        .append(" | Hours Worked: ").append(record[3]).append("\n");
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return attendanceDetails.length() > 0 ? attendanceDetails.toString() : "No attendance records found.";
-    }
-    
     private static List<String> getAttendanceHistory(String username) {
     List<String> attendanceRecords = new ArrayList<>();
     String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
@@ -416,6 +381,7 @@ public class PayrollSystemGUI extends JFrame {
     }
     
     //Here, it display our payroll menu.
+    @SuppressWarnings("null")
     private void showPayrollMenu() {
     String[] options = {"View Salary", "View Deductions", "View Payslip", "Back to Main Menu"};
     
@@ -525,7 +491,6 @@ public class PayrollSystemGUI extends JFrame {
         
         //It computes the groos salary of the user base on his input in total hours worked.
         double grossSalary = totalHours * hourlyRate;
-        String formattedSalary = String.format("%.2f", grossSalary);
         return "Employee Name: " + employeeName + "\nEmployee ID: " + employeeID + "\nGross Salary: " + String.format("%.2f", grossSalary);
     }
     
@@ -534,8 +499,6 @@ public class PayrollSystemGUI extends JFrame {
     //We add the feature ArrayList in this method to store deductions dynamically.
     private void showDeductions(String username, double totalHours) {
         //Here we decided to just import the calculations of the deduction from the console base code.
-        //This will only make an instance of console base code (TACP2)to have access to the deduction methods.
-        TACP2 tacp2 = new TACP2(); 
 
         //Accesing the compute salary method from TACP2.
         String salaryInfo = computeSalary(username, totalHours);
@@ -546,10 +509,10 @@ public class PayrollSystemGUI extends JFrame {
 
         //Here it computes the deductions using the method we use from TACP2.
         List<Double> deductionsList = new ArrayList<>();
-        deductionsList.add(tacp2.computeSSS(grossSalary));
-        deductionsList.add(tacp2.computePhilHealth(grossSalary));
-        deductionsList.add(tacp2.computePagIbig(grossSalary));
-        deductionsList.add(tacp2.computeWithholdingTax(grossSalary));
+        deductionsList.add(TACP2.computeSSS(grossSalary));
+        deductionsList.add(TACP2.computePhilHealth(grossSalary));
+        deductionsList.add(TACP2.computePagIbig(grossSalary));
+        deductionsList.add(TACP2.computeWithholdingTax(grossSalary));
 
 
         //Here we just add all the deductions and it's sum. Then subtract it to the gross salary.
@@ -603,19 +566,19 @@ public class PayrollSystemGUI extends JFrame {
         
         //It calculates the total compensation from all the allowances.
         double totalCompensation = riceSubsidy + phoneAllowance + clothingAllowance;
-
         //Here we use the deduction method from TACP2.
-        TACP2 tacp2 = new TACP2();
-        double sssDeduction = tacp2.computeSSS(grossSalary);
-        double philHealthDeduction = tacp2.computePhilHealth(grossSalary);
-        double pagIbigDeduction = tacp2.computePagIbig(grossSalary);
-        double withholdingTax = tacp2.computeWithholdingTax(grossSalary);
+
+        double sssDeduction = TACP2.computeSSS(grossSalary);
+        double philHealthDeduction = TACP2.computePhilHealth(grossSalary);
+        double pagIbigDeduction = TACP2.computePagIbig(grossSalary);
+        double withholdingTax = TACP2.computeWithholdingTax(grossSalary);
         double totalDeductions = sssDeduction + philHealthDeduction + pagIbigDeduction + withholdingTax;
         double netSalary = grossSalary - totalDeductions;
 
         //It will display the whole payslip with gross salary, deductions, compensation and net salary.
-        String payslipInfo = "**PAYSLIP**\n" +
-                             "Employee: " + username +
+        String payslipInfo = """
+                             **PAYSLIP**
+                             Employee: """ + username +
                              "\nGross Salary: " + String.format("%.2f", grossSalary) +
                              "\n\n**Deductions**" +
                              "\nSSS Deduction: " + String.format("%.2f", sssDeduction) +

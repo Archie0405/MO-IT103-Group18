@@ -1,5 +1,10 @@
 package GUI;
 
+/**
+ *
+ * @author Nichie
+ */
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -77,7 +82,11 @@ public class AdminAccess extends JFrame {
         menuPanel.add(logoutButton);
 
         String[] columnNames = {"Employee Number", "Last Name", "First Name", "SSS Number", "PhilHealth Number", "TIN", "Pag-IBIG Number"};
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0){
+            @Override
+            public boolean isCellEditable(int row, int column){
+            return false;}
+        };
         JTable employeeTable = new JTable(model);
 
         try (BufferedReader br = new BufferedReader(new FileReader(EMPLOYEE_DETAILS_CSV))) {
