@@ -101,13 +101,13 @@ public class PayrollSystemGUI extends JFrame {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            
         }
         return false;
     }
     
     private static String[] parseCSVLine(String line) {
-        return line.replaceAll("\"", "").split(",");
+        return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); //  Smart comma split
     }
 
     public PayrollSystemGUI(String username) {
@@ -189,7 +189,7 @@ public class PayrollSystemGUI extends JFrame {
             }
         }
     } catch (IOException e) {
-        e.printStackTrace();
+        
     }
     return profileData.length() > 0 ? profileData.toString() : "Profile not found.";
     }
@@ -213,7 +213,7 @@ public class PayrollSystemGUI extends JFrame {
 
         }
     } catch (IOException e) {
-        e.printStackTrace();
+       
     }
 
     return attendanceRecords;
@@ -245,21 +245,13 @@ public class PayrollSystemGUI extends JFrame {
         );
 
         switch (choice) {
-            case 0:
-                showDailyAttendance();
-                break;
-            case 1:
-                showWeeklyHoursWorked();
-                break;
-            //We add an additional option to show attendance history.
-            case 2:
-                showAttendanceHistory();
-                break;
-            case 3:
-                showMessage("Returning to Main Menu.");
-                break;
+            case 0 -> showDailyAttendance();
+            case 1 -> showWeeklyHoursWorked();
+            case 2 -> showAttendanceHistory();
+            case 3 -> showMessage("Returning to Main Menu.");
         }
-    }
+        //We add an additional option to show attendance history.
+            }
     
     //This will display the daily attendance of the user. We also amake it scrollable. 
     private void showDailyAttendance() {
@@ -315,7 +307,7 @@ public class PayrollSystemGUI extends JFrame {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            
         }
         return attendanceDetails.length() > 0 ? attendanceDetails.toString() : "No attendance records found.";
     }
@@ -368,7 +360,6 @@ public class PayrollSystemGUI extends JFrame {
                 }
             }
         } catch (IOException | RuntimeException e) {
-            e.printStackTrace();
         }
         
         //This make the summary of weekly hours.
@@ -383,23 +374,23 @@ public class PayrollSystemGUI extends JFrame {
     //Here, it display our payroll menu.
     @SuppressWarnings("null")
     private void showPayrollMenu() {
-    String[] options = {"View Salary", "View Deductions", "View Payslip", "Back to Main Menu"};
-    
-    //It shows the user the multiple options of our menu.
-    int choice = JOptionPane.showOptionDialog(
-        this, 
-        "Select an option:", 
-        "Payroll Menu", 
-        JOptionPane.DEFAULT_OPTION, 
-        JOptionPane.INFORMATION_MESSAGE, 
-        null, 
-        options, 
-        options[0] //This is the default selection.
-            
-    );
-    
-    String username = loggedInUser; 
-    double totalHours = 0;
+        String[] options = {"View Salary", "View Deductions", "View Payslip", "Back to Main Menu"};
+
+        //It shows the user the multiple options of our menu.
+        int choice = JOptionPane.showOptionDialog(
+            this, 
+            "Select an option:", 
+            "Payroll Menu", 
+            JOptionPane.DEFAULT_OPTION, 
+            JOptionPane.INFORMATION_MESSAGE, 
+            null, 
+            options, 
+            options[0] //This is the default selection.
+
+        );
+
+        String username = loggedInUser; 
+        double totalHours = 0;
     
     //Here we make an exception for choice 3 since we just it to just back to main menu.
     //So, this logic only works if ther's a prompt needed for hours worked.
@@ -425,18 +416,10 @@ public class PayrollSystemGUI extends JFrame {
     
     //This will initiate the payroll menu options.
     switch (choice) {
-        case 0:
-            showSalary(totalHours);
-            break;
-        case 1:
-            showDeductions(username, totalHours);
-            break;
-        case 2:
-            showPayslip(username, totalHours);
-            break;
-        case 3:
-            showMessage("Returning to Main Menu.");
-            break;
+        case 0 -> showSalary(totalHours);
+        case 1 -> showDeductions(username, totalHours);
+        case 2 -> showPayslip(username, totalHours);
+        case 3 -> showMessage("Returning to Main Menu.");
         }
 
     }
@@ -444,15 +427,15 @@ public class PayrollSystemGUI extends JFrame {
     //This will show the computed salary in a message dialog.
     //We add a sample matrix of the salary tier.
     private void showSalary(double totalHours) { 
-    String salaryInfo = computeSalary(loggedInUser, totalHours);
-    int[][] salaryMatrix = {
-        {35000, 5000, 30000},
-        {42000, 6000, 36000},
-        {50000, 7500, 42500}
-    };
+        String salaryInfo = computeSalary(loggedInUser, totalHours);
+        int[][] salaryMatrix = {
+            {35000, 5000, 30000},
+            {42000, 6000, 36000},
+            {50000, 7500, 42500}
+        };
 
-    StringBuilder salaryDetails = new StringBuilder();
-    salaryDetails.append(salaryInfo).append("\n\nSample Salary Matrix:\n");
+        StringBuilder salaryDetails = new StringBuilder();
+        salaryDetails.append(salaryInfo).append("\n\nSample Salary Matrix:\n");
     
     for (int i = 0; i < salaryMatrix.length; i++) {
         salaryDetails.append("Tier ").append(i + 1).append(": Base = ").append(salaryMatrix[i][0])
@@ -478,15 +461,15 @@ public class PayrollSystemGUI extends JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             while ((line = br.readLine()) != null) {
                 String[] record = parseCSVLine(line);
-                if (record.length >= 20 && record[0].equals(username)) {
+                if (record.length >= 19 && record[0].equals(username)) {
                     employeeName = record[1];
                     employeeID = record[0];
-                    hourlyRate = Double.parseDouble(record[19]); // Assuming hourly rate is at index 3
+                    hourlyRate = Double.parseDouble(record[18]); // Assuming hourly rate is at index 3
                     break; //The end of the search once the data has found.
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
+            
         }
         
         //It computes the groos salary of the user base on his input in total hours worked.
@@ -548,20 +531,19 @@ public class PayrollSystemGUI extends JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
         String line;
         while ((line = br.readLine()) != null) {
-            line = line.replace("\"", ""); //We use this to remove unwanted quotes in our csv file.
-            String[] record = line.split(",");
+            String[] record = parseCSVLine(line);
             if (record.length >= 19 && record[0].equals(username)) {  
                 //Remove quotation marks and commas, then parse as double
-                riceSubsidy = Double.parseDouble(record[15].replace("\"", "").replace(",", "").trim());
-                phoneAllowance = Double.parseDouble(record[16].replace("\"", "").replace(",", "").trim());
-                clothingAllowance = Double.parseDouble(record[17].replace("\"", "").replace(",", "").trim());
+                riceSubsidy = Double.parseDouble(record[14].replace("\"", "").replace(",", "").trim());
+                phoneAllowance = Double.parseDouble(record[15].replace("\"", "").replace(",", "").trim());
+                clothingAllowance = Double.parseDouble(record[16].replace("\"", "").replace(",", "").trim());
                 break;
             }
         }
 
 
         } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
+            
         }
         
         //It calculates the total compensation from all the allowances.
