@@ -24,10 +24,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import Console.TACP2; // We import this class to javbe access to deductions
+import java.time.Month;
+import java.util.Arrays;
+
 
 
 public class PayrollSystemGUI extends JFrame {
     private static String loggedInUser = "";
+    private static final String ATTENDANCE_RECORD_CSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
     
     public static void main(String[] args) {
         //Here it will just launch the login screen.
@@ -390,29 +394,47 @@ public class PayrollSystemGUI extends JFrame {
         );
 
         String username = loggedInUser; 
-        double totalHours = 0;
+        double totalHours;
     
     //Here we make an exception for choice 3 since we just it to just back to main menu.
-    //So, this logic only works if ther's a prompt needed for hours worked.
-    if (choice != 3){
-        boolean validInput = false;
-        while (!validInput) {
-            try {
-                String hoursWorkedInput = JOptionPane.showInputDialog("Enter total hours worked:");
-                if (hoursWorkedInput == null){
-                    return; //It simple execute the promp if the user clicked the cancel button.
-                }
-                if (hoursWorkedInput == null || hoursWorkedInput.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Input cannot be empty. Please enter a valid number.", "Warning", JOptionPane.WARNING_MESSAGE);
-                } else {
-                    totalHours = Double.parseDouble(hoursWorkedInput);
-                    validInput = true; //Exit the loop if the parsing succeeds.
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Invalid input! Please enter a valid number for hours worked.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+    //We created a dropdown list for the month that the user wants to view their payroll
+    JComboBox<String> monthSelector = new JComboBox<>(new String[]{
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    });
+    
+    //And creates a dropdown list for the year they preferred
+    JComboBox<String> yearSelector = new JComboBox<>(new String[]{
+        "2023", "2024", "2025", "2026", "2027"
+    });
+    
+    //This are the panels for both the month and year dropdowns
+    JPanel selectionPanel = new JPanel();
+    selectionPanel.add(new JLabel("Select Month:"));
+    selectionPanel.add(monthSelector);
+    selectionPanel.add(new JLabel("Select Year:"));
+    selectionPanel.add(yearSelector);
+
+    //In here, it will show a dialog box with the selection panel embedded
+    int selection = JOptionPane.showConfirmDialog(
+        null,
+        selectionPanel,
+        "Select Payroll Coverage",
+        JOptionPane.OK_CANCEL_OPTION,
+        JOptionPane.PLAIN_MESSAGE
+    );
+    
+    //This is where we will get the user's selection when they clicked the OK button
+    String selectedMonth;
+    String selectedYear;
+    if (selection == JOptionPane.OK_OPTION) {
+        selectedMonth = (String) monthSelector.getSelectedItem(); //Getting the month they choose
+        selectedYear = (String) yearSelector.getSelectedItem(); // and the year
+        totalHours = computeTotalMonthlyHours(username, selectedMonth, selectedYear); // Computing the attendance for a month
+    } else {
+        return;
     }
+
     
     //This will initiate the payroll menu options.
     switch (choice) {
@@ -422,6 +444,46 @@ public class PayrollSystemGUI extends JFrame {
         case 3 -> showMessage("Returning to Main Menu.");
         }
 
+    }
+    
+    //This is where we compute the total hours worked of the user based on their selected month and year
+    private double computeTotalMonthlyHours(String username, String selectedMonth, String selectedYear) {
+        double totalHours = 0.0;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(ATTENDANCE_RECORD_CSV))) {
+            br.readLine();
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] record = parseCSVLine(line);
+                if (record.length >= 6 && record[0].equals(username)) {
+                    try {
+                        //We parse here the attendance date string into a localdate object
+                        LocalDate recordDate = LocalDate.parse(record[3], DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+                        
+                        //Then convert the dropdowns into usable types
+                        Month selectedMonthEnum = Month.valueOf(selectedMonth.toUpperCase());
+                        int selectedYearInt = Integer.parseInt(selectedYear);
+                        
+                        //This is where we check if the attendance record has a match in the selected month and year
+                        if (recordDate.getMonth() == selectedMonthEnum && recordDate.getYear() == selectedYearInt) {
+                            LocalTime loginTime = LocalTime.parse(record[4]);
+                            LocalTime logoutTime = LocalTime.parse(record[5]);
+                            
+                            //Then calculate the total hours worked in fractional hours
+                            double hoursWorked = java.time.Duration.between(loginTime, logoutTime).toMinutes() / 60.0;
+                            totalHours += Math.max(hoursWorked, 0); //It keeps away the negative hours
+                        }
+                    } catch (NumberFormatException ex) {
+                        System.err.println("Skipping malformed record: " + Arrays.toString(record));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error reading attendance data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return totalHours;
     }
     
     //This will show the computed salary in a message dialog.
