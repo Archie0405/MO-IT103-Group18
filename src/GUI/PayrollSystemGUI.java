@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import Console.TACP2; // We import this class to javbe access to deductions
+import Console.TACP2; // We import this class to have access to deductions
 import java.time.Month;
 import java.util.Arrays;
 
@@ -640,11 +640,6 @@ public class PayrollSystemGUI extends JFrame {
 
         JOptionPane.showMessageDialog(null, payslipInfo, "Generated Payslip", JOptionPane.INFORMATION_MESSAGE);
     }
-    
-
-    
-    
-    
 
     //We include a logout button and return the user to the login screen.
     private void logOut() {
