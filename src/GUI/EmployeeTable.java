@@ -4,6 +4,11 @@
  */
 package GUI;
 
+/**
+ *
+ * @author Nichie
+ */
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.io.BufferedReader;
@@ -15,13 +20,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author USER
- */
 public class EmployeeTable {
     //This will display the employee table in a new window
     public static void displayEmployeeTable() {
@@ -30,10 +32,9 @@ public class EmployeeTable {
         employeeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         employeeFrame.setLocationRelativeTo(null);
         
-        //This is the navigation buttons
+        //This is the navigation buttons and their layout and style
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new GridLayout(1, 4, 10, 10));
-
         JButton viewEmployeeButton = ButtonsStyle.ButtonStyle2("View Employee");
         JButton newEmployeeButton = ButtonsStyle.ButtonStyle2("New Employee");
         JButton manageEmployeeButton = ButtonsStyle.ButtonStyle2("Manage Employees");
@@ -94,7 +95,30 @@ public class EmployeeTable {
         });
         newEmployeeButton.addActionListener(e -> AdminAccess.displayNewEmployeeForm(employeeFrame, model));
 
-
+ 
         
     }
+    
+    //We make this method just to update the table visually
+    public static void updateJTable(JTable employeeTable, JTextField[] textFields) {
+        DefaultTableModel model = (DefaultTableModel) employeeTable.getModel();
+
+        //Ensure table isn't empty before updating
+        if (model.getRowCount() == 0 || textFields.length < model.getColumnCount()) {
+            return;
+        }
+
+        //Mapping JTable columns (0–6) to their corresponding textField indices
+        int[] columnIndexes = {0, 1, 2, 3, 4, 5, 6};
+        for (int row = 0; row < columnIndexes.length; row++) {
+            for (int i = 0; i < columnIndexes.length; i++) {
+                employeeTable.setValueAt(textFields[i].getText().trim(), row, columnIndexes[i]);
+            }
+        }
+
+        ((DefaultTableModel) employeeTable.getModel()).fireTableDataChanged(); //Refresh JTable
+        JOptionPane.showMessageDialog(null, "Employee table updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    
 }
