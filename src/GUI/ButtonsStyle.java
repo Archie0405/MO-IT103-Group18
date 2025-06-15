@@ -4,6 +4,11 @@
  */
 package GUI;
 
+/**
+ *
+ * @author Nichie
+ */
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,11 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 
-/**
- *
- * @author USER
- */
 public class ButtonsStyle {
+    //We make two buttons to style each button from admin access window to the the employee table
     //This is our custon button design for button 1
     public static JButton ButtonStyle1(String text) {
         JButton button = new JButton(text);

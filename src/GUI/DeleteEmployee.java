@@ -4,6 +4,11 @@
  */
 package GUI;
 
+/**
+ *
+ * @author Nichie
+ */
+
 import static GUI.AdminAccess.EMPLOYEE_DETAILS_CSV;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,10 +20,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author USER
- */
+
 public class DeleteEmployee {
     //This method deletes an employee record from the csv file and refreshes the jtable
     public static void deleteEmployee(String employeeNumber, DefaultTableModel model) {
@@ -29,6 +31,8 @@ public class DeleteEmployee {
             String header = br.readLine();
             employees.add(header.split(","));
 
+            //This is a loop that reads the csv file line by line and find an employee that doens't match the ID
+            //Generally used to delete employee records
             String line;
             while ((line = br.readLine()) != null) {
                 String[] record = line.split(",");
@@ -42,7 +46,7 @@ public class DeleteEmployee {
         }
 
         //Now, it will write back the remaining employees in the csv file
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(EMPLOYEE_DETAILS_CSV))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(AdminAccess.EMPLOYEE_DETAILS_CSV))) {
             for (String[] employee : employees) {
                 bw.write(String.join(",", employee));
                 bw.newLine();
@@ -52,6 +56,6 @@ public class DeleteEmployee {
             return;
         }
 
-        RefreshTable.refreshEmployeeTable(model); //This is the second method we did when refreshing the Jtable
+        RefreshTable.refreshEmployeeTable2(model); //This is the second method we did when refreshing the Jtable
     }
 }

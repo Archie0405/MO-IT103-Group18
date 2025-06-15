@@ -31,18 +31,29 @@ public class AdminAccess extends JFrame {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(100, 200, 100, 200));
         
         //This is the main buttons, we use button style number 1 since we created 2 buttons styles
-        JButton showEmployeesButton = ButtonsStyle.ButtonStyle1("Show All Employees");
+        JButton adminAccess = ButtonsStyle.ButtonStyle1("Admin Access");
+        //We added here a new button just incase the admin user wants to go back to employee mode.
+        JButton showEmployeeAccess = ButtonsStyle.ButtonStyle1("Employee Access");
         JButton logoutButton = ButtonsStyle.ButtonStyle1("Log Out");
         
         //This is the action listeners for the buttons
-        showEmployeesButton.addActionListener(e -> {
+        adminAccess.addActionListener(e -> {
             dispose();
             EmployeeTable.displayEmployeeTable();
         });
+        //In this action listener, I want the admin user to be redirected to the employee mode of the program
+        //This invoke their admin access if they opt to switch in employee mode
+        showEmployeeAccess.addActionListener(e -> {
+            dispose();
+        String loggedInUser  = "DefaultUser";    
+        SwingUtilities.invokeLater(() -> new PayrollSystemGUI(loggedInUser ).setVisible(true));
+        });
+        
         logoutButton.addActionListener(e -> logOut());
         
         //It adds buttons to our panel
-        mainPanel.add(showEmployeesButton);
+        mainPanel.add(adminAccess);
+        mainPanel.add(showEmployeeAccess);
         mainPanel.add(logoutButton);
         add(mainPanel);
     }
@@ -82,7 +93,8 @@ public class AdminAccess extends JFrame {
                            "July", "August", "September", "October", "November", "December"};
         JComboBox<String> monthSelector = new JComboBox<>(months);
         JButton computeSalaryButton = ButtonsStyle.ButtonStyle2("Compute Salary");
-
+        
+        //This is the action listener for Salary computation and we call the methods to get the total hours worked, hourly rate and salary.
         computeSalaryButton.addActionListener(e -> {
             String selectedMonth = (String) monthSelector.getSelectedItem();
             double totalHoursWorked = TotalMonthlyHours.computeTotalMonthlyHours(employeeID, selectedMonth);
@@ -157,7 +169,7 @@ public class AdminAccess extends JFrame {
 
         JTextField[] textFields = new JTextField[labels.length];
         
-        //Now it will generate the form fields with labels
+        //Now it will generate the form fields with labels and we set the textfields to 20.
         for (int i = 0; i < labels.length; i++) {
             textFields[i] = new JTextField(20);
             gbc.gridx = 0;
@@ -222,6 +234,7 @@ public class AdminAccess extends JFrame {
     
     //We make this to read the data in the csv file correctly
     public static String[] parseCSVLine(String line) {
-        return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); // 🔹 Preserves fields correctly
+        return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); //Preserves fields correctly
     }
+  
 }

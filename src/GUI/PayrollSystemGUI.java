@@ -26,6 +26,7 @@ import java.util.Map;
 import Console.TACP2; // We import this class to have access to deductions
 import java.time.Month;
 import java.util.Arrays;
+import java.util.Set;
 
 
 
@@ -58,11 +59,9 @@ public class PayrollSystemGUI extends JFrame {
         loginButton.addActionListener(e -> {
             String username = userText.getText();
             String password = new String(passText.getPassword());
-            
-            
-            
+   
             //Here is the authentication of the credentials.
-            if (authenticateUser(username, password)) {
+            if (Authentication.authenticateUser(username, password)) {
                 loginFrame.dispose();
                 SwingUtilities.invokeLater(() -> {
                     PayrollSystemGUI gui = new PayrollSystemGUI(username);
@@ -87,30 +86,9 @@ public class PayrollSystemGUI extends JFrame {
         loginFrame.setVisible(true);
     }
     
-    //Here it checks the user's credentials through the csv file.
-    private static boolean authenticateUser(String username, String password) {
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
-        String line;
-        boolean isFirstEntry = true;
-        
-        //This will attempt to read the csv file and verify the data.
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            while ((line = br.readLine()) != null) {
-                String[] credentials = parseCSVLine(line);
-                
-                //Now it will check if the username and password is correct or has a match.
-                if (credentials.length >= 2 && credentials[0].equals(username) && credentials[1].equals(password))
-                if (isFirstEntry) {  
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            
-        }
-        return false;
-    }
     
-    private static String[] parseCSVLine(String line) {
+    
+    public static String[] parseCSVLine(String line) {
         return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); //  Smart comma split
     }
 
@@ -141,14 +119,16 @@ public class PayrollSystemGUI extends JFrame {
         panel.add(attendanceButton);
         panel.add(payrollButton);
         panel.add(multiplicationTableButton);
-        if (loggedInUser.equals("10001")) {  
-            JButton adminPanelButton = new JButton("Admin Controls");
-            adminPanelButton.addActionListener(e -> {
-                dispose();  // Close PayrollSystemGUI
-                new AdminAccess().setVisible(true);  // Open Admin Access
-            });
-            panel.add(adminPanelButton);
-        }
+        Set<String> adminUsers = Set.of("10001", "10002", "10003", "10004"); //You can add multiple admins here
+
+            if (adminUsers.contains(loggedInUser)) {  
+                JButton adminPanelButton = new JButton("Admin Controls");
+                adminPanelButton.addActionListener(e -> {
+                    dispose();  // Close PayrollSystemGUI
+                    new AdminAccess().setVisible(true);  // Open Admin Access
+                });
+                panel.add(adminPanelButton);
+            }
 
 
         panel.add(logoutButton);
