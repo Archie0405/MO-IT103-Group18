@@ -19,36 +19,39 @@ import javax.swing.table.DefaultTableModel;
  * @author USER
  */
 public class UpdateEmployee {
-    //This method updates an employee records in the csv file while preserving the old ID for look up
-    public static void updateEmployeeInCSV(String[] updatedEmployee, String oldEmployeeNumber, DefaultTableModel model) {
+    //This method updates an employee records in the csv file while preserving the ID for look up
+    //It also refreshes the table to show the updated data
+    public static void updateEmployeeInCSV(String[] updatedEmployee, DefaultTableModel model) {
         List<String[]> employees = new ArrayList<>();
         boolean employeeUpdated = false;
 
         try (BufferedReader br = new BufferedReader(new FileReader(AdminAccess.EMPLOYEE_DETAILS_CSV))) {
             String header = br.readLine();
-            employees.add(header.split(","));
+            employees.add(AdminAccess.parseCSVLine(header));
 
             String line;
+            //A while loop to process each records line by line
             while ((line = br.readLine()) != null) {
-                String[] record = line.split(",");
+                String[] record = AdminAccess.parseCSVLine(line);//Proper parsing
                 if (record.length >= employees.get(0).length) {
-                    if (record[0].equals(oldEmployeeNumber)) { 
-                        //We make this if the user wants to change the employee ID, it replaces the old Id with the new ID while keeping all the records intact
-                        record[0] = updatedEmployee[0]; // New Employee ID
-                        System.arraycopy(updatedEmployee, 1, record, 1, updatedEmployee.length - 1); // Update other fields
+                    if (record[0].equals(updatedEmployee[0])) { //Compare using the ID
+                        record = updatedEmployee; //Replace the whole record
                         employeeUpdated = true;
                     }
                     employees.add(record);
                 } else {
+                    //an error message if a record is malformed or has missing fields
                     System.err.println("Skipping malformed record: " + line);
                 }
             }
         } catch (IOException e) {
+            //If the program has an error while reading the file
             JOptionPane.showMessageDialog(null, "Error reading employee records!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+        
         if (!employeeUpdated) {
+            //This will throw an error is the ID is not found or matched.
             JOptionPane.showMessageDialog(null, "Error: Employee record not found!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
