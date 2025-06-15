@@ -66,27 +66,46 @@ public class AdminAccess extends JFrame {
             JOptionPane.showMessageDialog(null, "Please select an employee first!", "No Selection", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        JFrame detailsFrame = new JFrame("Employee Information");
-        detailsFrame.setSize(500, 500);
-        detailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        detailsFrame.setLocationRelativeTo(null);
-
-        String employeeID = table.getValueAt(selectedRow, 0).toString();
         
+        String employeeID = table.getValueAt(selectedRow, 0).toString(); //Get ID from selected table row
+
+        // Use existing method to retrieve full employee record from CSV
+        String[] fullDetails = GetEmployeeDetails.getEmployeeDetails(employeeID);//Be sure this method is complete
+        
+        if (fullDetails == null) {
+            JOptionPane.showMessageDialog(null, "Could not find complete employee data.", "Data Missing", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        
+        String[] headers = {
+            "Employee ID", "Last Name", "First Name", "Birthday",
+            "Address", "Phone Number", "SSS Number", "PhilHealth Number", "TIN",
+            "Pag-IBIG Number", "Status", "Position", "Immediate Supervisor",
+            "Basic Salary", "Rice Subsidy", "Phone Allowance", "Clothing Allowance",
+            "Gross Semi-monthly Rate", "Hourly Rate"
+        };
+
         //Building the employee data for display
         StringBuilder detailsBuilder = new StringBuilder("<html><h2>Employee Details</h2><p>");
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            detailsBuilder.append("<b>").append(table.getColumnName(i)).append(":</b> ")
-                .append(table.getValueAt(selectedRow, i)).append("<br>");
+        for (int i = 0; i < Math.min(headers.length, fullDetails.length); i++) {
+            detailsBuilder.append("<b>").append(headers[i]).append(":</b> ")
+                .append(fullDetails[i]).append("<br>");
         }
+        
 
         detailsBuilder.append("</p></html>");
 
         final String employeeDetails = detailsBuilder.toString();
-
         JLabel label = new JLabel(employeeDetails);
         label.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        JFrame detailsFrame = new JFrame("Employee Information");
+        detailsFrame.setSize(600, 800);
+        detailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        detailsFrame.setLocationRelativeTo(null);
+        detailsFrame.setVisible(true);
+
         
         //We make a drop down menu wherein the user can choose a month then compute the salary of the selected employee
         String[] months = {"January", "February", "March", "April", "May", "June", 

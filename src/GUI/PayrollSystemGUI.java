@@ -119,7 +119,9 @@ public class PayrollSystemGUI extends JFrame {
         panel.add(attendanceButton);
         panel.add(payrollButton);
         panel.add(multiplicationTableButton);
-        Set<String> adminUsers = Set.of("10001", "10002", "10003", "10004"); //You can add multiple admins here
+        Set<String> adminUsers = Set.of("10001", "10002", "10003", "10004",
+                                        "10005", "10006", "10007", "10008", "10009"); //You can add multiple admins here
+        
 
             if (adminUsers.contains(loggedInUser)) {  
                 JButton adminPanelButton = new JButton("Admin Controls");
