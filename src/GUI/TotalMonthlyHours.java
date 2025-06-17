@@ -20,11 +20,11 @@ public class TotalMonthlyHours {
    //This is where we compute the total hours worked in a selected month with the use ofd the attendance records.
     public static double computeTotalMonthlyHours(String employeeID, String selectedMonth) {
         double totalHours = 0.0;
-        try (BufferedReader br = new BufferedReader(new FileReader(AdminAccess.ATTENDANCE_RECORD_CSV))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ViewEmployee.ATTENDANCE_RECORD_CSV))) {
             br.readLine(); 
             String line;
             while ((line = br.readLine()) != null) {
-                String[] record = AdminAccess.parseCSVLine(line);
+                String[] record = ViewEmployee.parseCSVLine(line);
                 
                 //This make sure the valid record format and match employee ID
                 if (record.length >= 6 && record[0].equals(employeeID)) {
