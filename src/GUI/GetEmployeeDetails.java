@@ -23,7 +23,7 @@ public class GetEmployeeDetails {
         String line;
         
         while ((line = br.readLine()) != null) {
-            String[] details = PayrollSystemGUI.parseCSVLine(line); //Ensure correct parsing
+            String[] details = MainMenu.parseCSVLine(line); //Ensure correct parsing
 
             if (details.length > 0 && details[0].trim().equals(employeeID.trim())) {
                 return details; //This return the full employee record as a String array

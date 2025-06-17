@@ -9,7 +9,7 @@ package GUI;
  * @author Nichie
  */
 
-import static GUI.AdminAccess.EMPLOYEE_DETAILS_CSV;
+import static GUI.ViewEmployee.EMPLOYEE_DETAILS_CSV;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -46,7 +46,7 @@ public class DeleteEmployee {
         }
 
         //Now, it will write back the remaining employees in the csv file
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(AdminAccess.EMPLOYEE_DETAILS_CSV))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ViewEmployee.EMPLOYEE_DETAILS_CSV))) {
             for (String[] employee : employees) {
                 bw.write(String.join(",", employee));
                 bw.newLine();

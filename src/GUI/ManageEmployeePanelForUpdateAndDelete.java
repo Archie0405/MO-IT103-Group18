@@ -118,9 +118,6 @@ public class ManageEmployeePanelForUpdateAndDelete {
             //Update the CSV using values from updatedEmployee
             UpdateEmployee.updateEmployeeInCSV(updatedEmployee, model);
 
-            //Update the JTable visually based on changes, this is a specif method that we did to fix rewriting a wrong index in the csv file
-            EmployeeTable.updateJTable(employeeTable, textFields);
-
             // Fully reload the model to ensure consistency
             RefreshTable.refreshEmployeeTable2(model);
 
