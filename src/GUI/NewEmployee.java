@@ -70,7 +70,7 @@ public class NewEmployee {
 
             //We get the user's input and ensure all text fields are properly read into the array
             for (int i = 0; i < labels.length; i++) {
-                newEmployee[i] = textFields[i].getText().trim(); //Remove leading/trailing spaces
+                newEmployee[i] = removeQuotes(textFields[i].getText().trim()); //Remove leading/trailing spaces
             }
 
             //We debug the output, so we print the input data before writing it in the csv file
@@ -95,6 +95,9 @@ public class NewEmployee {
 //This method saves the new employee data into the csv file
     private static void appendNewEmployeeToCSV(String[] employeeData) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(EMPLOYEE_DETAILS_CSV, true))) {
+            for (int i = 0; i < employeeData.length; i++) {
+                employeeData[i] = removeQuotes(employeeData[i]); // 🔹 Format text before writing
+            }
             bw.write(String.join(",", employeeData)); //Append the new employee record
             bw.newLine();
             bw.flush(); //We want to make sure that the data is written in the csv file before closing
@@ -104,6 +107,15 @@ public class NewEmployee {
         }
     }
  
-   
+   private static String removeQuotes(String input) {
+        input = input.replaceAll("^\"|\"$", ""); //it removes redundant quotes
+
+        //This will check if the user's input has a comma then put it inside quotation
+        if (input.contains(",") || input.contains("\"") || input.contains("'")) {
+            input = "\"" + input.replace("\"", "\"\"") + "\"";
+        }
+
+        return input.trim(); //This trims the spaces
+    }
 
 }
