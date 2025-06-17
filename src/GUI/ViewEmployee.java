@@ -33,6 +33,9 @@ public class ViewEmployee extends JFrame {
             return;
         }
         
+        for (int i = 0; i < fullDetails.length; i++) {
+            fullDetails[i] = forQuotation(fullDetails[i]);
+        }
         
         String[] headers = {
             "Employee ID", "Last Name", "First Name", "Birthday",
@@ -43,25 +46,43 @@ public class ViewEmployee extends JFrame {
         };
 
         //Building the employee data for display
+        //We divided it to 4 section for readability.
         StringBuilder detailsBuilder = new StringBuilder("<html><h2>Employee Details</h2><p>");
-        for (int i = 0; i < Math.min(headers.length, fullDetails.length); i++) {
-            detailsBuilder.append("<b>").append(headers[i]).append(":</b> ")
-                .append(fullDetails[i]).append("<br>");
-        }
         
+        //This is the section 1, showing index 0 to 5
+        detailsBuilder.append("***************** Employee Basic Details *****************<br>");
+        for (int i = 0; i <= 5; i++) {
+            detailsBuilder.append("<b>").append(headers[i]).append(":</b> ").append(fullDetails[i]).append("<br>");
+        }
+        detailsBuilder.append("<br>----------------------------------------------------------<br>");
+
+        //This is the section 2, showing index 6 to 9
+        detailsBuilder.append("******************* Government IDs ***********************<br>");
+        for (int i = 6; i <= 9; i++) {
+            detailsBuilder.append("<b>").append(headers[i]).append(":</b> ").append(fullDetails[i]).append("<br>");
+        }
+        detailsBuilder.append("<br>----------------------------------------------------------<br>");
+
+        //This is the section 3, showing index 10 to 12
+        detailsBuilder.append("******************* Work Information *********************<br>");
+        for (int i = 10; i <= 12; i++) {
+            detailsBuilder.append("<b>").append(headers[i]).append(":</b> ").append(fullDetails[i]).append("<br>");
+        }
+        detailsBuilder.append("<br>----------------------------------------------------------<br>");
+
+        //This is the last section, showing the index 13 until the end of the line
+        detailsBuilder.append("******************* Salary Breakdown *********************<br>");
+        for (int i = 13; i < headers.length; i++) {
+            detailsBuilder.append("<b>").append(headers[i]).append(":</b> ").append(fullDetails[i]).append("<br>");
+        }
 
         detailsBuilder.append("</p></html>");
 
-        final String employeeDetails = detailsBuilder.toString();
-        JLabel label = new JLabel(employeeDetails);
+        JLabel label = new JLabel(detailsBuilder.toString());
         label.setHorizontalAlignment(SwingConstants.CENTER);
         
-        JFrame detailsFrame = new JFrame("Employee Information");
-        detailsFrame.setSize(600, 800);
-        detailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        detailsFrame.setLocationRelativeTo(null);
-        detailsFrame.setVisible(true);
-
+        JScrollPane scrollPane = new JScrollPane(label);
+        scrollPane.setPreferredSize(new Dimension(600, 500));
         
         //We make a drop down menu wherein the user can choose a month then compute the salary of the selected employee
         String[] months = {"January", "February", "March", "April", "May", "June", 
@@ -69,66 +90,80 @@ public class ViewEmployee extends JFrame {
         JComboBox<String> monthSelector = new JComboBox<>(months);
         JButton computeSalaryButton = ButtonsStyle.ButtonStyle2("Compute Salary");
         
+         //It adds the components to the panel
+        JPanel selectionPanel = new JPanel();
+        selectionPanel.add(new JLabel("Select Month:"));
+        selectionPanel.add(monthSelector);
+        selectionPanel.add(computeSalaryButton);
+
+        JFrame detailsFrame = new JFrame("Employee Information");
+        detailsFrame.setSize(700, 650);
+        detailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        detailsFrame.setLayout(new BorderLayout());
+        detailsFrame.add(scrollPane, BorderLayout.CENTER); // Employee details in center
+        
         //This is the action listener for Salary computation and we call the methods to get the total hours worked, hourly rate and salary.
         computeSalaryButton.addActionListener(e -> {
             String selectedMonth = (String) monthSelector.getSelectedItem();
             double totalHoursWorked = TotalMonthlyHours.computeTotalMonthlyHours(employeeID, selectedMonth);
             double hourlyRate = HourlyRate.getHourlyRate(employeeID);
             double salary = totalHoursWorked * hourlyRate;
-
-            displayComputedSalary(detailsFrame, employeeDetails, selectedMonth, totalHoursWorked, hourlyRate, salary);
-        });
+            String employeeDetails = detailsBuilder.toString();
+            
+           displayComputedSalary(detailsFrame, employeeDetails, employeeID, selectedMonth, totalHoursWorked, salary);
+    });
         
-        //It adds the components to the panel
-        JPanel selectionPanel = new JPanel();
-        selectionPanel.add(new JLabel("Select Month:"));
-        selectionPanel.add(monthSelector);
-        selectionPanel.add(computeSalaryButton);
-
-        detailsFrame.setLayout(new BorderLayout());
-        detailsFrame.add(label, BorderLayout.CENTER);
-        detailsFrame.add(selectionPanel, BorderLayout.SOUTH);
+       
+        detailsFrame.add(selectionPanel, BorderLayout.SOUTH); // Dropdown & button at bottom
+        detailsFrame.setLocationRelativeTo(null);
         detailsFrame.setVisible(true);
+
     }
     
     //It will now display the computed salary
-    private static void displayComputedSalary(JFrame frame, String employeeDetails, String month, double totalHoursWorked, double hourlyRate, double salary) {
-        //We use html for formatting when showing the computed salary
-        String salaryInfo = "<html><h2>Salary Details for " + month + "</h2><p>"
-                          + "<b>Total Hours Worked:</b> " + totalHoursWorked + " hrs<br>"
-                          + "<b>Hourly Rate:</b> ₱ " + hourlyRate + "/hr<br>"
-                          + "<b>Gross Salary:</b> ₱ " + salary + "</p></html>";
-        
-        //Here, we create the lables for employee details and their salary
-        JLabel detailsLabel = new JLabel(employeeDetails);
-        JLabel salaryLabel = new JLabel(salaryInfo);
-        
-        //We set the text in the center for better representation
-        detailsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        salaryLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    public static void displayComputedSalary(JFrame frame, String employeeDetails, String employeeID, String month, double totalHoursWorked, double salary) {
+    
+    //We call the method from CP1 when computing and showing the payslip
+    String payslipInfo = MainMenu.showPayslip(employeeID, totalHoursWorked); // Uses your existing logic
+    
+    //Since we use the method from show payslip from CP1
+    //And since we can add a new employee without attendance record
+    //We make an if statement if the records is null or empty.
+    if (payslipInfo == null || payslipInfo.isEmpty()) {
+        payslipInfo = "<html><b>Error:</b> Payslip could not be generated.</html>"; // Fallback in case of null
+    }
+    
+    //This shows the employee full details
+    JLabel detailsLabel = new JLabel("<html><pre>" + employeeDetails.replace("\n", "<br>") + "</pre></html>");
+    detailsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        //Here, it arranges the details in a panel
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 1));
-        panel.add(detailsLabel);
-        panel.add(salaryLabel);
-        
-        //We want to refresh the frame to show the updated salary details
-        frame.getContentPane().removeAll();
-        frame.add(panel);
-        frame.revalidate();
-        frame.repaint();
-    }
+    //This is the payslip details, it will show below the employee details
+    JLabel payslipLabel = new JLabel("<html><pre>" + payslipInfo.replace("\n", "<br>") + "</pre></html>");
+    payslipLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+    //We want to show the employee details and the payslip in the same panel
+    JPanel panel = new JPanel();
+    panel.setLayout(new GridLayout(2, 1)); // Divides the panel into sections
+    panel.add(detailsLabel);  // Employee details remain visible
+    panel.add(payslipLabel);  // Payslip is displayed below details
+
+    JScrollPane scrollPane = new JScrollPane(panel);
+    scrollPane.setPreferredSize(new Dimension(600, 400));
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     
-    
-     //This is the method for the log out button
-    public void logOut() {
-        dispose();
-        SwingUtilities.invokeLater(() -> LogIn.showLoginScreen());
-    }
+    //Refresh Frame to Show Updated Payslip
+    frame.getContentPane().removeAll();
+    frame.add(scrollPane);
+    frame.revalidate();
+    frame.repaint();
+}
+
     
     //We make this to read the data in the csv file correctly
     public static String[] parseCSVLine(String line) {
         return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); //Preserves fields correctly
     }  
+    public static String forQuotation(String input) {
+        return input.replaceAll("^\"|\"$", ""); //Removes surrounding quotes
+    }
 }
