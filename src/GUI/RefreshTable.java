@@ -36,11 +36,11 @@ public class RefreshTable {
 
         List<String[]> employees = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(AdminAccess.EMPLOYEE_DETAILS_CSV))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ViewEmployee.EMPLOYEE_DETAILS_CSV))) {
             br.readLine(); // Skip header
             String line;
             while ((line = br.readLine()) != null) {
-                String[] record = AdminAccess.parseCSVLine(line); //Ensure proper parsing of quoted fields
+                String[] record = ViewEmployee.parseCSVLine(line); //Ensure proper parsing of quoted fields
 
                 if (record.length >= 19 && record[0].matches("\\d+")) { //Validate record structure
                     employees.add(record);
@@ -75,11 +75,11 @@ public class RefreshTable {
 
         List<String[]> employees = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(AdminAccess.EMPLOYEE_DETAILS_CSV))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ViewEmployee.EMPLOYEE_DETAILS_CSV))) {
             br.readLine();
             String line;
             while ((line = br.readLine()) != null) {
-                String[] record = AdminAccess.parseCSVLine(line);
+                String[] record = ViewEmployee.parseCSVLine(line);
                 
                 //It make sure the employee records length and also check if the employee number is numeric
                 if (record.length >= 19 && record[0].matches("\\d+")) {
