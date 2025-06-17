@@ -33,7 +33,7 @@ public class Authentication {
                     continue; // Skip header
                 }
 
-                String[] credentials = PayrollSystemGUI.parseCSVLine(line);
+                String[] credentials = MainMenu.parseCSVLine(line);
                 
                 //This is where it checks if the prased data has enough fields and mathces the employee ID and last name
                 if (credentials.length >= 2 &&
