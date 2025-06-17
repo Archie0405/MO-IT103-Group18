@@ -25,14 +25,14 @@ public class UpdateEmployee {
         List<String[]> employees = new ArrayList<>();
         boolean employeeUpdated = false;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(AdminAccess.EMPLOYEE_DETAILS_CSV))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ViewEmployee.EMPLOYEE_DETAILS_CSV))) {
             String header = br.readLine();
-            employees.add(AdminAccess.parseCSVLine(header));
+            employees.add(ViewEmployee.parseCSVLine(header));
 
             String line;
             //A while loop to process each records line by line
             while ((line = br.readLine()) != null) {
-                String[] record = AdminAccess.parseCSVLine(line);//Proper parsing
+                String[] record = ViewEmployee.parseCSVLine(line);//Proper parsing
                 if (record.length >= employees.get(0).length) {
                     if (record[0].equals(updatedEmployee[0])) { //Compare using the ID
                         record = updatedEmployee; //Replace the whole record
@@ -57,7 +57,7 @@ public class UpdateEmployee {
         }
 
         //This will rewrite the csv file with the updated employee rocords
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(AdminAccess.EMPLOYEE_DETAILS_CSV))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ViewEmployee.EMPLOYEE_DETAILS_CSV))) {
             for (String[] employee : employees) {
                 bw.write(String.join(",", employee));
                 bw.newLine();
