@@ -4,8 +4,8 @@
  */
 package GUI;
 
-import static GUI.AdminAccess.EMPLOYEE_DETAILS_CSV;
-import static GUI.AdminAccess.parseCSVLine;
+import static GUI.ViewEmployee.EMPLOYEE_DETAILS_CSV;
+import static GUI.ViewEmployee.parseCSVLine;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
