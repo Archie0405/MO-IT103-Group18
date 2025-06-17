@@ -409,7 +409,7 @@ public class MainMenu extends JFrame {
     }
     
     // Display generated payslip for selected employee
-    private void showPayslip(String employeeID, double totalHours) {
+    public static String showPayslip(String employeeID, double totalHours) {
         String salaryInfo = computeSalary(employeeID, totalHours);
         String[] salaryDetails = salaryInfo.split("\n");
         double grossSalary = Double.parseDouble(salaryDetails[2].replaceAll("Gross Salary: ", "").trim());
@@ -462,6 +462,7 @@ public class MainMenu extends JFrame {
                              "\nNet Pay: " + String.format("%.2f", netSalary);
 
         JOptionPane.showMessageDialog(null, payslipInfo, "Generated Payslip", JOptionPane.INFORMATION_MESSAGE);
+        return payslipInfo;
     }
 
     // Show payroll menu for the selected employee
