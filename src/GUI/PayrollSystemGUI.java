@@ -31,8 +31,8 @@ import java.util.Set;
 
 
 public class PayrollSystemGUI extends JFrame {
-    private static String loggedInUser = "";
-    private static final String ATTENDANCE_RECORD_CSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+    private static String loggedInUser = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+    private static final String ATTENDANCE_RECORD_CSV = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
     
     public static void main(String[] args) {
         //Here it will just launch the login screen.
@@ -155,7 +155,7 @@ public class PayrollSystemGUI extends JFrame {
     
     //It retrieves the information of the user from the csv file.
     private static String getUserProfile(String username) {
-    String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+    String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
     String line;
     StringBuilder profileData = new StringBuilder();
     
@@ -182,7 +182,7 @@ public class PayrollSystemGUI extends JFrame {
 
     private static List<String> getAttendanceHistory(String username) {
     List<String> attendanceRecords = new ArrayList<>();
-    String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+    String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
     String line;
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     
@@ -276,7 +276,7 @@ public class PayrollSystemGUI extends JFrame {
 
     // This will read attendance CSV file and get the records of the current user.
     private static String getDailyAttendance(String username) {
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+        String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
         String line;
         StringBuilder attendanceDetails = new StringBuilder();
         
@@ -317,7 +317,7 @@ public class PayrollSystemGUI extends JFrame {
     
     //It calculates the weekly hours wroked of the user from the Attendance csv file.
     private static String getWeeklyHoursWorked(String username) {
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+        String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
         String line;
         
         //We define here the format of date and time.
@@ -495,7 +495,7 @@ public class PayrollSystemGUI extends JFrame {
     //Then get the details of the user.
     public static String computeSalary(String username, double totalHours) {
         //This is the file path of the employee database or csv file.
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+        String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
         String line;
         double hourlyRate = 0;
         String employeeName = "";
@@ -569,7 +569,7 @@ public class PayrollSystemGUI extends JFrame {
         double grossSalary = Double.parseDouble(salaryDetails[2].replaceAll("Gross Salary: ", "").trim());
 
         //This will get the compensations(allowances) from the csv file.
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+        String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
         double riceSubsidy = 0, phoneAllowance = 0, clothingAllowance = 0;
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {

@@ -9,36 +9,35 @@ package GUI;
  * @author Nichie
  */
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-
-
+import javax.swing.*;
+import java.awt.*;
+/**
+ *
+ * @author Nichie
+ */
 public class ButtonsStyle {
-    //We make two buttons to style each button from admin access window to the the employee table
-    //This is our custon button design for button 1
+
     public static JButton ButtonStyle1(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("SansSerif", Font.BOLD, 16));
-        button.setBackground(new Color(45, 45, 45));
+        button.setBackground(new Color(52, 152, 219)); // Blue
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createLineBorder(new Color(100, 100, 100), 2));
-        button.setPreferredSize(new Dimension(250, 50));
         return button;
     }
-    
-    //This is our custom button smaller buttons
+
     public static JButton ButtonStyle2(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("SansSerif", Font.BOLD, 14));
-        button.setBackground(new Color(80, 80, 80));
+        button.setBackground(new Color(46, 204, 113)); // Green
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createLineBorder(new Color(100, 100, 100), 2));
-        button.setPreferredSize(new Dimension(150, 30));
+        return button;
+    }
+
+    public static JButton DangerButtonStyle(String text) {
+        JButton button = new JButton(text);
+        button.setBackground(new Color(231, 76, 60)); // Red
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
         return button;
     }
 }

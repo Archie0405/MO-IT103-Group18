@@ -11,8 +11,8 @@ import java.awt.*;
 
 public class ViewEmployee extends JFrame {
     //File paths for our CSV files
-    public static final String EMPLOYEE_DETAILS_CSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
-    public static final String ATTENDANCE_RECORD_CSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+    public static final String EMPLOYEE_DETAILS_CSV = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+    public static final String ATTENDANCE_RECORD_CSV = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
    
     //It display an employee data when a row is selected in the table
     public static void viewEmployeeDetails(JTable table) {

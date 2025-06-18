@@ -15,8 +15,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class AdminAccess extends JFrame {
     //File paths for our CSV files
-    public static final String EMPLOYEE_DETAILS_CSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
-    public static final String ATTENDANCE_RECORD_CSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+    public static final String EMPLOYEE_DETAILS_CSV = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+    public static final String ATTENDANCE_RECORD_CSV = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
     
     //This is the constructor, it will set up the admin window
     public AdminAccess() {

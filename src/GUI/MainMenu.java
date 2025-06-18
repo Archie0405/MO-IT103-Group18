@@ -23,8 +23,8 @@ import java.util.List;
 
 
 public class MainMenu extends JFrame {
-    private static String selectedEmployeeID = ""; // Stores selected Employee ID
-    private static final String EMPLOYEE_CSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+    private static String selectedEmployeeID = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv"; // Stores selected Employee ID
+    private static final String EMPLOYEE_CSV = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
 
     //Here it will just launch the login screen.
     public static void main(String[] args) {
@@ -121,7 +121,7 @@ public class MainMenu extends JFrame {
     
     // This will read attendance CSV file and get the records of the current user.
     private static String getDailyAttendance(String employeeID) {
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+        String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
         String line;
         StringBuilder attendanceDetails = new StringBuilder();
         
@@ -146,7 +146,7 @@ public class MainMenu extends JFrame {
     
     //It calculates the weekly hours wroked of the user from the Attendance csv file.
     private static String getWeeklyHoursWorked(String employeeID) {
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
+        String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\Copy of MotorPH Employee Data - Attendance Record.csv";
         String line;
         
         //We define here the format of date and time.
@@ -415,7 +415,7 @@ public class MainMenu extends JFrame {
         double grossSalary = Double.parseDouble(salaryDetails[2].replaceAll("Gross Salary: ", "").trim());
 
         // Retrieve allowances from CSV file
-        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+        String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
         double riceSubsidy = 0, phoneAllowance = 0, clothingAllowance = 0;
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
