@@ -35,6 +35,9 @@ public class UpdateEmployee {
                 String[] record = ViewEmployee.parseCSVLine(line);//Proper parsing
                 if (record.length >= employees.get(0).length) {
                     if (record[0].equals(updatedEmployee[0])) { //Compare using the ID
+                        for (int i = 0; i < updatedEmployee.length; i++) {
+                            updatedEmployee[i] = removeQuotation(updatedEmployee[i]); // 🔹 Ensure CSV formatting
+                        }
                         record = updatedEmployee; //Replace the whole record
                         employeeUpdated = true;
                     }
@@ -69,5 +72,11 @@ public class UpdateEmployee {
 
         RefreshTable.refreshEmployeeTable(model, updatedEmployee[0], updatedEmployee); // 🔹 Use NEW ID for refresh
         
+    }
+    public static String removeQuotation(String input) {
+        if (input.contains(",") || input.contains("\"") || input.contains("'")) {
+            return "\"" + input.replace("\"", "\"\"") + "\""; // 🔹 Properly escapes quotes
+        }
+        return input.trim();
     }
 }

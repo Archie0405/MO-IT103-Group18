@@ -36,6 +36,10 @@ public class ManageEmployeePanelForUpdateAndDelete {
             JOptionPane.showMessageDialog(null, "Error: Employee record not found in CSV!", "Data Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        // 🔹 Remove quotes before displaying in text fields
+        for (int i = 0; i < employeeDetails.length; i++) {
+            employeeDetails[i] = ViewEmployee.forQuotation(employeeDetails[i]); 
+        }
 
         // Create a new frame for managing employee data
         JFrame manageFrame = new JFrame("Manage Employee");
@@ -112,7 +116,7 @@ public class ManageEmployeePanelForUpdateAndDelete {
             //It collects updated field values from textFields
             String[] updatedEmployee = new String[textFields.length];
             for (int i = 0; i < textFields.length; i++) {
-                updatedEmployee[i] = textFields[i].getText().trim();
+                updatedEmployee[i] = UpdateEmployee.removeQuotation(textFields[i].getText().trim());
             }
 
             //Update the CSV using values from updatedEmployee
@@ -136,4 +140,5 @@ public class ManageEmployeePanelForUpdateAndDelete {
             }
         });
     }
+    
 }
