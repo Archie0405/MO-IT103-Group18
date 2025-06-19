@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import GUI.ButtonsStyle;
 
 /**
  *
@@ -28,12 +29,14 @@ public class LogIn {
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(3, 2));
+        
 
         JLabel userLabel = new JLabel("Username:");
         JTextField userText = new JTextField();
         JLabel passLabel = new JLabel("Password:");
         JPasswordField passText = new JPasswordField();
         JButton loginButton = new JButton("Login");
+        
         
         //It adds the functionality to our login button.
         loginButton.addActionListener(e -> {

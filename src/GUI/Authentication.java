@@ -20,7 +20,7 @@ public class Authentication {
     public static boolean authenticateUser(String employeeID, String lastName) {
         
         //We make a new csv file for the credentials of employees (Feature 4)
-        String loginCSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Credentials.csv"; 
+        String loginCSV = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv"; 
 
         try (BufferedReader br = new BufferedReader(new FileReader(loginCSV))) {
             String line;
