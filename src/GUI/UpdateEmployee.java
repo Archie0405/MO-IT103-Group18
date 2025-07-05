@@ -38,6 +38,7 @@ public class UpdateEmployee {
                         for (int i = 0; i < updatedEmployee.length; i++) {
                             updatedEmployee[i] = removeQuotation(updatedEmployee[i]); //Ensure CSV formatting
                         }
+                        
                         record = updatedEmployee; //Replace the whole record
                         employeeUpdated = true;
                     }
@@ -74,6 +75,7 @@ public class UpdateEmployee {
         
     }
     public static String removeQuotation(String input) {
+        input = input.replaceAll("^\"|\"$", ""); //it removes redundant quotes
         if (input.contains(",") || input.contains("\"") || input.contains("'")) {
             return "\"" + input.replace("\"", "\"\"") + "\""; //Properly escapes quotes
         }
