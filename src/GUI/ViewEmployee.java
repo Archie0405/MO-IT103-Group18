@@ -7,6 +7,9 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.Month;
+import java.util.Arrays;
+import java.util.Locale;
 
 
 public class ViewEmployee extends JFrame {
@@ -85,16 +88,31 @@ public class ViewEmployee extends JFrame {
         scrollPane.setPreferredSize(new Dimension(600, 500));
         
         //We make a drop down menu wherein the user can choose a month then compute the salary of the selected employee
-        String[] months = {"January", "February", "March", "April", "May", "June", 
-                           "July", "August", "September", "October", "November", "December"};
+        // Month names
+        String[] months = months = Arrays.stream(Month.values())
+            .map(m -> m.getDisplayName(java.time.format.TextStyle.FULL, Locale.ENGLISH))
+            .toArray(String[]::new);
         JComboBox<String> monthSelector = new JComboBox<>(months);
+
+        // Year options (e.g., current year ± 2)
+        int currentYear = java.time.Year.now().getValue();
+        String[] years = {
+            String.valueOf(currentYear - 1),
+            String.valueOf(currentYear),
+            String.valueOf(currentYear + 1)
+        };
+        JComboBox<String> yearSelector = new JComboBox<>(years);
+        yearSelector.setSelectedItem(String.valueOf(currentYear)); // Default to this year
         JButton computeSalaryButton = ButtonsStyle.ButtonStyle2("Compute Salary");
         
          //It adds the components to the panel
         JPanel selectionPanel = new JPanel();
         selectionPanel.add(new JLabel("Select Month:"));
         selectionPanel.add(monthSelector);
+        selectionPanel.add(new JLabel("Year:"));
+        selectionPanel.add(yearSelector);
         selectionPanel.add(computeSalaryButton);
+
 
         JFrame detailsFrame = new JFrame("Employee Information");
         detailsFrame.setSize(700, 650);
@@ -105,14 +123,14 @@ public class ViewEmployee extends JFrame {
         //This is the action listener for Salary computation and we call the methods to get the total hours worked, hourly rate and salary.
         computeSalaryButton.addActionListener(e -> {
             String selectedMonth = (String) monthSelector.getSelectedItem();
-            double totalHoursWorked = TotalMonthlyHours.computeTotalMonthlyHours(employeeID, selectedMonth);
+            String selectedYear = (String) yearSelector.getSelectedItem();
+            double totalHoursWorked = TotalMonthlyHours.computeTotalMonthlyHours(employeeID, selectedMonth, selectedYear);
             double hourlyRate = HourlyRate.getHourlyRate(employeeID);
             double salary = totalHoursWorked * hourlyRate;
             String employeeDetails = detailsBuilder.toString();
             
            displayComputedSalary(detailsFrame, employeeDetails, employeeID, selectedMonth, totalHoursWorked, salary);
     });
-        
        
         detailsFrame.add(selectionPanel, BorderLayout.SOUTH); // Dropdown & button at bottom
         detailsFrame.setLocationRelativeTo(null);

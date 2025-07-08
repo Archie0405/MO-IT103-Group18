@@ -13,6 +13,7 @@ import static GUI.ViewEmployee.ATTENDANCE_RECORD_CSV;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
@@ -410,22 +411,59 @@ public class MainMenu extends JFrame {
     
     // Display generated payslip for selected employee
     public static String showPayslip(String employeeID, double totalHours) {
-        String salaryInfo = computeSalary(employeeID, totalHours);
-        String[] salaryDetails = salaryInfo.split("\n");
-        double grossSalary = Double.parseDouble(salaryDetails[2].replaceAll("Gross Salary: ", "").trim());
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.US);
+        currencyFormat.setMinimumFractionDigits(2);
+        currencyFormat.setMaximumFractionDigits(2);
 
-        // Retrieve allowances from CSV file
-        String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+        double grossSalary = 0, sssDeduction = 0, philHealthDeduction = 0;
+        double pagIbigDeduction = 0, withholdingTax = 0, totalDeductions = 0;
         double riceSubsidy = 0, phoneAllowance = 0, clothingAllowance = 0;
+        double totalCompensation = 0, netSalary = 0;
+        
+        //Makes the compesnsation zero if no records is found or if total hours is zero.
+        if (totalHours > 0) {
+            String salaryInfo = computeSalary(employeeID, totalHours);
+            String[] salaryDetails = salaryInfo.split("\n");
+            grossSalary = Double.parseDouble(salaryDetails[2].replaceAll("Gross Salary: ", "").trim());
+            
+            //Compute deductions using TACP2 methods
+            sssDeduction = TACP2.computeSSS(grossSalary);
+            philHealthDeduction = TACP2.computePhilHealth(grossSalary);
+            pagIbigDeduction = TACP2.computePagIbig(grossSalary);
+            withholdingTax = TACP2.computeWithholdingTax(grossSalary);
+            totalDeductions = sssDeduction + philHealthDeduction + pagIbigDeduction + withholdingTax;
 
+            //Load CSV allowances
+            String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+            try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] record = parseCSVLine(line);
+                    if (record.length >= 19 && record[0].equals(employeeID)) {
+                        riceSubsidy = parseQuotedNumber(record[14]);
+                        phoneAllowance = parseQuotedNumber(record[15]);
+                        clothingAllowance = parseQuotedNumber(record[16]);
+                        break;
+                    }
+                }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+            }
+
+            totalCompensation = riceSubsidy + phoneAllowance + clothingAllowance;
+            netSalary = grossSalary - totalDeductions;
+        }
+        // Retrieve allowances from CSV file
+        String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+        
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] record = parseCSVLine(line);
                 if (record.length >= 19 && record[0].equals(employeeID)) {  
-                    riceSubsidy = Double.parseDouble(record[14].replace("\"", "").replace(",", "").trim());
-                    phoneAllowance = Double.parseDouble(record[15].replace("\"", "").replace(",", "").trim());
-                    clothingAllowance = Double.parseDouble(record[16].replace("\"", "").replace(",", "").trim());
+                    riceSubsidy = parseQuotedNumber(record[14]);
+                    phoneAllowance = parseQuotedNumber(record[15]);
+                    clothingAllowance = parseQuotedNumber(record[16]);
                     break;
                 }
             }
@@ -433,36 +471,46 @@ public class MainMenu extends JFrame {
             e.printStackTrace();
         }
 
-        // Compute deductions using TACP2 methods
-        double sssDeduction = TACP2.computeSSS(grossSalary);
-        double philHealthDeduction = TACP2.computePhilHealth(grossSalary);
-        double pagIbigDeduction = TACP2.computePagIbig(grossSalary);
-        double withholdingTax = TACP2.computeWithholdingTax(grossSalary);
-        double totalDeductions = sssDeduction + philHealthDeduction + pagIbigDeduction + withholdingTax;
-        double totalCompensation = riceSubsidy + phoneAllowance + clothingAllowance;
-        double netSalary = grossSalary - totalDeductions;
+        
+        
 
         // Format payslip details
         String payslipInfo = """
-                             **PAYSLIP**
-                             Employee: """ + employeeID +
-                             "\nGross Salary: " + String.format("%.2f", grossSalary) +
-                             "\n\n**Deductions**" +
-                             "\nSSS Deduction: " + String.format("%.2f", sssDeduction) +
-                             "\nPhilHealth Deduction: " + String.format("%.2f", philHealthDeduction) +
-                             "\nPag-IBIG Deduction: " + String.format("%.2f", pagIbigDeduction) +
-                             "\nWithholding Tax: " + String.format("%.2f", withholdingTax) +
-                             "\nTotal Deductions: " + String.format("%.2f", totalDeductions) +
-                             "\n\n**Compensations**" +
-                             "\nRice Subsidy: " + String.format("%.2f", riceSubsidy) +
-                             "\nPhone Allowance: " + String.format("%.2f", phoneAllowance) +
-                             "\nClothing Allowance: " + String.format("%.2f", clothingAllowance) +
-                             "\nTotal Compensation: " + String.format("%.2f", totalCompensation) +
-                             "\n\n**Net Salary**" +
-                             "\nNet Pay: " + String.format("%.2f", netSalary);
+                     **PAYSLIP**
+                     Employee: """ + employeeID +
+                     "\nGross Salary: ₱" + currencyFormat.format(grossSalary) +
+                     "\n\n**Deductions**" +
+                     "\nSSS Deduction: ₱" + currencyFormat.format(sssDeduction) +
+                     "\nPhilHealth Deduction: ₱" + currencyFormat.format(philHealthDeduction) +
+                     "\nPag-IBIG Deduction: ₱" + currencyFormat.format(pagIbigDeduction) +
+                     "\nWithholding Tax: ₱" + currencyFormat.format(withholdingTax) +
+                     "\nTotal Deductions: ₱" + currencyFormat.format(totalDeductions) +
+                     "\n\n**Compensations**" +
+                     "\nRice Subsidy: ₱" + currencyFormat.format(riceSubsidy) +
+                     "\nPhone Allowance: ₱" + currencyFormat.format(phoneAllowance) +
+                     "\nClothing Allowance: ₱" + currencyFormat.format(clothingAllowance) +
+                     "\nTotal Compensation: ₱" + currencyFormat.format(totalCompensation) +
+                     "\n\n**Net Salary**" +
+                     "\nNet Pay: ₱" + currencyFormat.format(netSalary);
 
         JOptionPane.showMessageDialog(null, payslipInfo, "Generated Payslip", JOptionPane.INFORMATION_MESSAGE);
         return payslipInfo;
+    }
+    
+    private static double parseQuotedNumber(String value) {
+        if (value == null || value.trim().isEmpty()) return 0;
+
+        value = value.trim();
+
+        // Remove outer quotes only
+        if (value.startsWith("\"") && value.endsWith("\"")) {
+            value = value.substring(1, value.length() - 1);
+        }
+
+        // Remove inner commas (thousand separators)
+        value = value.replace(",", "");
+
+        return Double.parseDouble(value);
     }
 
     // Show payroll menu for the selected employee
