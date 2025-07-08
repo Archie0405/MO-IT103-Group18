@@ -17,7 +17,7 @@ public class GetEmployeeDetails {
     //We did this specific method to get all the employee details, we used this in the manage employee panel
     //We encounter an issue wherein the program rewrites an incorrect index in the csv file because we use the data in the jtable instead of csv file. Fixed
     public static String[] getEmployeeDetails(String employeeID) {
-    String csvFile = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
+    String csvFile = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv";
 
     try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
         String line;
