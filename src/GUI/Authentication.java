@@ -18,9 +18,9 @@ public class Authentication {
     //Here it checks the user's credentials through the csv file (Feature 4)
     //If match is found it will return a true argument, if not it's false.
     public static boolean authenticateUser(String employeeID, String lastName) {
-        
+        //Try
         //We make a new csv file for the credentials of employees (Feature 4)
-        String loginCSV = "C:\\Users\\Mow\\OneDrive\\Documents\\NetBeansProjects\\CP2\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Employee Details.csv"; 
+        String loginCSV = "C:\\Users\\USER\\Documents\\NetBeansProjects\\MO-IT103-Group18\\src\\payroll\\hub\\databases\\MotorPH Employee Data - Credentials.csv"; 
 
         try (BufferedReader br = new BufferedReader(new FileReader(loginCSV))) {
             String line;
